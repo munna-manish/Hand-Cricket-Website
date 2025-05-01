@@ -1,0 +1,618 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hand Cricket Game</title>
+    <style>
+        :root {
+            --primary: #5046e5;
+            --primary-light: #6b61fc;
+            --secondary: #ff6b6b;
+            --text: #333;
+            --light-bg: #f8f9fa;
+            --border: #ddd;
+            --success: #28a745;
+            --danger: #dc3545;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: var(--light-bg);
+            color: var(--text);
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px 0;
+            background: var(--primary);
+            color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+        
+        .game-description {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 0 20px;
+        }
+        
+        .game-container {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .game-mode-select {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .mode-btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            background-color: var(--primary);
+            color: white;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .mode-btn:hover {
+            background-color: var(--primary-light);
+            transform: translateY(-2px);
+        }
+        
+        .mode-btn.active {
+            background-color: var(--secondary);
+        }
+        
+        #gameScreen, #resultScreen, #scoreboardScreen {
+            display: none;
+        }
+        
+        .scoreboard {
+            display: flex;
+            justify-content: space-around;
+            margin: 20px 0;
+            font-size: 1.2rem;
+        }
+        
+        .player-info, .computer-info {
+            padding: 15px;
+            background-color: var(--light-bg);
+            border-radius: 10px;
+            min-width: 150px;
+        }
+        
+        .player-name, .computer-name {
+            font-weight: bold;
+            margin-bottom: 10px;
+            font-size: 1.4rem;
+        }
+        
+        .hand-choice {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 15px;
+            margin: 30px 0;
+        }
+        
+        .hand-btn {
+            padding: 15px;
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            border: 2px solid var(--border);
+            background-color: white;
+            font-size: 1.5rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .hand-btn:hover {
+            background-color: var(--primary);
+            color: white;
+            transform: scale(1.1);
+        }
+        
+        .result-container {
+            margin: 30px 0;
+            padding: 20px;
+            border-radius: 10px;
+            background-color: var(--light-bg);
+        }
+        
+        .choices {
+            display: flex;
+            justify-content: space-around;
+            margin: 20px 0;
+        }
+        
+        .choice {
+            font-size: 2rem;
+            font-weight: bold;
+        }
+        
+        .result-message {
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin: 20px 0;
+        }
+        
+        .btn-primary {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            background-color: var(--primary);
+            color: white;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 10px;
+        }
+        
+        .btn-primary:hover {
+            background-color: var(--primary-light);
+            transform: translateY(-2px);
+        }
+        
+        .btn-secondary {
+            padding: 12px 24px;
+            border: 2px solid var(--primary);
+            border-radius: 8px;
+            background-color: transparent;
+            color: var(--primary);
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 10px;
+        }
+        
+        .btn-secondary:hover {
+            background-color: var(--primary);
+            color: white;
+        }
+        
+        .game-status {
+            margin: 20px 0;
+            font-size: 1.2rem;
+            padding: 10px;
+            border-radius: 5px;
+        }
+        
+        .batting {
+            background-color: rgba(40, 167, 69, 0.2);
+            color: var(--success);
+        }
+        
+        .bowling {
+            background-color: rgba(220, 53, 69, 0.2);
+            color: var(--danger);
+        }
+        
+        .history-log {
+            margin: 20px 0;
+            max-height: 200px;
+            overflow-y: auto;
+            padding: 10px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            text-align: left;
+        }
+        
+        .match-summary {
+            margin: 20px 0;
+            padding: 20px;
+            background-color: var(--light-bg);
+            border-radius: 10px;
+        }
+        
+        .final-result {
+            font-size: 2rem;
+            font-weight: bold;
+            margin: 20px 0;
+        }
+        
+        .stats {
+            display: flex;
+            justify-content: space-around;
+            margin: 20px 0;
+        }
+        
+        .stat-card {
+            padding: 15px;
+            background-color: white;
+            border-radius: 10px;
+            min-width: 120px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        
+        .stat-title {
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: var(--primary);
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.5s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        @media (max-width: 768px) {
+            .hand-choice {
+                gap: 10px;
+            }
+            
+            .hand-btn {
+                width: 60px;
+                height: 60px;
+                font-size: 1.2rem;
+            }
+            
+            .scoreboard {
+                flex-direction: column;
+                align-items: center;
+                gap: 15px;
+            }
+            
+            .player-info, .computer-info {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Hand Cricket</h1>
+            <p>Test your cricket skills and luck in this digital version of the popular playground game!</p>
+        </header>
+        
+        <div class="game-description">
+            <h2>How to Play</h2>
+            <p>Choose a number from 1 to 6 using the buttons. If your number matches the computer's choice while you're batting, you're out! Otherwise, you score the number you chose. When bowling, if your number matches the computer's choice, they're out! Otherwise, they score their number.</p>
+        </div>
+        
+        <div id="startScreen" class="game-container fade-in">
+            <h2>Select Game Mode</h2>
+            <div class="game-mode-select">
+                <button class="mode-btn" data-overs="1">Quick (1 Over)</button>
+                <button class="mode-btn" data-overs="3">Standard (3 Overs)</button>
+                <button class="mode-btn" data-overs="5">Full (5 Overs)</button>
+            </div>
+            <button id="startBtn" class="btn-primary" disabled>Start Game</button>
+        </div>
+        
+        <div id="gameScreen" class="game-container fade-in">
+            <div class="game-status">
+                <span id="statusText">Your turn to bat!</span>
+            </div>
+            
+            <div class="scoreboard">
+                <div class="player-info">
+                    <div class="player-name">You</div>
+                    <div id="playerScore">0/0</div>
+                    <div id="playerOvers">0.0</div>
+                </div>
+                <div class="computer-info">
+                    <div class="computer-name">Computer</div>
+                    <div id="computerScore">0/0</div>
+                    <div id="computerOvers">0.0</div>
+                </div>
+            </div>
+            
+            <div class="result-container">
+                <div id="roundResult">Choose your number!</div>
+                <div class="choices">
+                    <div class="choice" id="playerChoice">-</div>
+                    <div class="vs">vs</div>
+                    <div class="choice" id="computerChoice">-</div>
+                </div>
+            </div>
+            
+            <div class="hand-choice">
+                <button class="hand-btn" data-value="1">1</button>
+                <button class="hand-btn" data-value="2">2</button>
+                <button class="hand-btn" data-value="3">3</button>
+                <button class="hand-btn" data-value="4">4</button>
+                <button class="hand-btn" data-value="5">5</button>
+                <button class="hand-btn" data-value="6">6</button>
+            </div>
+            
+            <div class="history-log" id="historyLog">
+                <p>Match started! You won the toss and elected to bat first.</p>
+            </div>
+        </div>
+        
+        <div id="resultScreen" class="game-container fade-in">
+            <h2>Match Result</h2>
+            <div class="final-result" id="finalResult">You won by 12 runs!</div>
+            
+            <div class="match-summary">
+                <h3>Match Summary</h3>
+                <div class="stats">
+                    <div class="stat-card">
+                        <div class="stat-title">Your Score</div>
+                        <div id="finalPlayerScore">54/2</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-title">Computer Score</div>
+                        <div id="finalComputerScore">42/10</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-title">Overs Played</div>
+                        <div id="totalOversPlayed">5.0</div>
+                    </div>
+                </div>
+            </div>
+            
+            <button id="newGameBtn" class="btn-primary">Play Again</button>
+        </div>
+    </div>
+
+    <script>
+        // Game state
+        const gameState = {
+            mode: null,
+            totalOvers: 0,
+            currentInnings: 'player', // player or computer
+            playerScore: 0,
+            playerWickets: 0,
+            playerBalls: 0,
+            computerScore: 0,
+            computerWickets: 0,
+            computerBalls: 0,
+            targetScore: 0,
+            gameOver: false
+        };
+
+        // DOM elements
+        const startScreen = document.getElementById('startScreen');
+        const gameScreen = document.getElementById('gameScreen');
+        const resultScreen = document.getElementById('resultScreen');
+        const modeBtns = document.querySelectorAll('.mode-btn');
+        const startBtn = document.getElementById('startBtn');
+        const statusText = document.getElementById('statusText');
+        const playerScoreDisplay = document.getElementById('playerScore');
+        const computerScoreDisplay = document.getElementById('computerScore');
+        const playerOversDisplay = document.getElementById('playerOvers');
+        const computerOversDisplay = document.getElementById('computerOvers');
+        const roundResult = document.getElementById('roundResult');
+        const playerChoiceDisplay = document.getElementById('playerChoice');
+        const computerChoiceDisplay = document.getElementById('computerChoice');
+        const handBtns = document.querySelectorAll('.hand-btn');
+        const historyLog = document.getElementById('historyLog');
+        const finalResult = document.getElementById('finalResult');
+        const finalPlayerScore = document.getElementById('finalPlayerScore');
+        const finalComputerScore = document.getElementById('finalComputerScore');
+        const totalOversPlayed = document.getElementById('totalOversPlayed');
+        const newGameBtn = document.getElementById('newGameBtn');
+
+        // Event listeners
+        modeBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                modeBtns.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                gameState.totalOvers = parseInt(btn.dataset.overs);
+                startBtn.disabled = false;
+            });
+        });
+
+        startBtn.addEventListener('click', startGame);
+        
+        handBtns.forEach(btn => {
+            btn.addEventListener('click', () => handlePlayerChoice(parseInt(btn.dataset.value)));
+        });
+        
+        newGameBtn.addEventListener('click', () => {
+            resultScreen.style.display = 'none';
+            startScreen.style.display = 'block';
+            resetGame();
+        });
+
+        // Game functions
+        function resetGame() {
+            gameState.mode = null;
+            gameState.currentInnings = 'player';
+            gameState.playerScore = 0;
+            gameState.playerWickets = 0;
+            gameState.playerBalls = 0;
+            gameState.computerScore = 0;
+            gameState.computerWickets = 0;
+            gameState.computerBalls = 0;
+            gameState.targetScore = 0;
+            gameState.gameOver = false;
+            
+            // Reset UI
+            playerScoreDisplay.textContent = '0/0';
+            computerScoreDisplay.textContent = '0/0';
+            playerOversDisplay.textContent = '0.0';
+            computerOversDisplay.textContent = '0.0';
+            roundResult.textContent = 'Choose your number!';
+            playerChoiceDisplay.textContent = '-';
+            computerChoiceDisplay.textContent = '-';
+            historyLog.innerHTML = '<p>Match started! You won the toss and elected to bat first.</p>';
+            
+            modeBtns.forEach(btn => btn.classList.remove('active'));
+            startBtn.disabled = true;
+        }
+
+        function startGame() {
+            startScreen.style.display = 'none';
+            gameScreen.style.display = 'block';
+            
+            // Set game status
+            statusText.textContent = 'Your turn to bat!';
+            statusText.className = 'game-status batting';
+            
+            updateScoreDisplay();
+        }
+
+        function handlePlayerChoice(playerChoice) {
+            if (gameState.gameOver) return;
+            
+            // Computer makes a choice
+            const computerChoice = Math.floor(Math.random() * 6) + 1;
+            
+            // Display choices
+            playerChoiceDisplay.textContent = playerChoice;
+            computerChoiceDisplay.textContent = computerChoice;
+            
+            if (gameState.currentInnings === 'player') {
+                // Player batting
+                gameState.playerBalls++;
+                
+                if (playerChoice === computerChoice) {
+                    // Player is out
+                    gameState.playerWickets++;
+                    addToHistory(`You chose ${playerChoice}, Computer chose ${computerChoice}. You're OUT!`);
+                    roundResult.textContent = "OUT! The computer got you!";
+                    
+                    if (gameState.playerWickets === 10 || isInningsOver(gameState.playerBalls, gameState.totalOvers)) {
+                        // Switch innings
+                        switchInnings();
+                    }
+                } else {
+                    // Player scored
+                    gameState.playerScore += playerChoice;
+                    addToHistory(`You chose ${playerChoice}, Computer chose ${computerChoice}. You scored ${playerChoice} runs.`);
+                    roundResult.textContent = `You scored ${playerChoice} runs!`;
+                    
+                    if (isInningsOver(gameState.playerBalls, gameState.totalOvers)) {
+                        // Switch innings
+                        switchInnings();
+                    }
+                }
+            } else {
+                // Computer batting
+                gameState.computerBalls++;
+                
+                if (playerChoice === computerChoice) {
+                    // Computer is out
+                    gameState.computerWickets++;
+                    addToHistory(`You chose ${playerChoice}, Computer chose ${computerChoice}. Computer is OUT!`);
+                    roundResult.textContent = "OUT! You got the computer!";
+                    
+                    if (gameState.computerWickets === 10 || 
+                        isInningsOver(gameState.computerBalls, gameState.totalOvers) || 
+                        gameState.computerScore > gameState.targetScore) {
+                        // Game over
+                        endGame();
+                    }
+                } else {
+                    // Computer scored
+                    gameState.computerScore += computerChoice;
+                    addToHistory(`You chose ${playerChoice}, Computer chose ${computerChoice}. Computer scored ${computerChoice} runs.`);
+                    roundResult.textContent = `Computer scored ${computerChoice} runs!`;
+                    
+                    if (gameState.computerScore > gameState.targetScore) {
+                        // Computer wins
+                        endGame();
+                    } else if (isInningsOver(gameState.computerBalls, gameState.totalOvers)) {
+                        // Game over
+                        endGame();
+                    }
+                }
+            }
+            
+            updateScoreDisplay();
+        }
+
+        function isInningsOver(balls, totalOvers) {
+            return balls >= totalOvers * 6;
+        }
+
+        function switchInnings() {
+            gameState.currentInnings = 'computer';
+            gameState.targetScore = gameState.playerScore + 1;
+            
+            statusText.textContent = "Computer's turn to bat! Your turn to bowl!";
+            statusText.className = 'game-status bowling';
+            
+            addToHistory(`First innings over. Computer needs ${gameState.targetScore} runs to win.`);
+            roundResult.textContent = `Choose your bowling number!`;
+        }
+
+        function updateScoreDisplay() {
+            const playerOvers = Math.floor(gameState.playerBalls / 6) + (gameState.playerBalls % 6) / 10;
+            const computerOvers = Math.floor(gameState.computerBalls / 6) + (gameState.computerBalls % 6) / 10;
+            
+            playerScoreDisplay.textContent = `${gameState.playerScore}/${gameState.playerWickets}`;
+            computerScoreDisplay.textContent = `${gameState.computerScore}/${gameState.computerWickets}`;
+            playerOversDisplay.textContent = playerOvers.toFixed(1);
+            computerOversDisplay.textContent = computerOvers.toFixed(1);
+        }
+
+        function addToHistory(message) {
+            const p = document.createElement('p');
+            p.textContent = message;
+            historyLog.appendChild(p);
+            historyLog.scrollTop = historyLog.scrollHeight;
+        }
+
+        function endGame() {
+            gameState.gameOver = true;
+            gameScreen.style.display = 'none';
+            resultScreen.style.display = 'block';
+            
+            const playerOvers = Math.floor(gameState.playerBalls / 6) + (gameState.playerBalls % 6) / 10;
+            const computerOvers = Math.floor(gameState.computerBalls / 6) + (gameState.computerBalls % 6) / 10;
+            
+            finalPlayerScore.textContent = `${gameState.playerScore}/${gameState.playerWickets} (${playerOvers.toFixed(1)} overs)`;
+            finalComputerScore.textContent = `${gameState.computerScore}/${gameState.computerWickets} (${computerOvers.toFixed(1)} overs)`;
+            totalOversPlayed.textContent = `${(playerOvers + computerOvers).toFixed(1)}`;
+            
+            if (gameState.playerScore > gameState.computerScore) {
+                const margin = gameState.playerScore - gameState.computerScore;
+                finalResult.textContent = `You won by ${margin} runs!`;
+                finalResult.style.color = '#28a745';
+            } else if (gameState.computerScore > gameState.playerScore) {
+                const wicketsLeft = 10 - gameState.computerWickets;
+                finalResult.textContent = `Computer won by ${wicketsLeft} wickets!`;
+                finalResult.style.color = '#dc3545';
+            } else {
+                finalResult.textContent = "It's a tie!";
+                finalResult.style.color = '#fd7e14';
+            }
+        }
+    </script>
+</body>
+</html>
